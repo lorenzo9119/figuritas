@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Mi Álbum · Mundial 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c1322; --panel:#121c30; --ink:#f5f7fb; --muted:#8ea0bd;
+    --line:rgba(255,255,255,.10); --owned:#2bd47a; --ownedink:#06351f;
+    --rep:#ffb01f; --miss:#37475f; --accent:#ff5a5f;
+    --shadow:0 6px 18px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:
+     radial-gradient(1200px 600px at 80% -10%, rgba(43,212,122,.10), transparent 60%),
+     radial-gradient(900px 500px at -10% 10%, rgba(255,90,95,.10), transparent 55%),
+     var(--bg);
+     color:var(--ink);
+     font-family:'Archivo',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+     -webkit-text-size-adjust:100%}
+  .wrap{max-width:680px;margin:0 auto;padding:0 8px 90px}
+
+  /* HEADER */
+  header{position:sticky;top:0;z-index:50;
+    background:linear-gradient(180deg, rgba(12,19,34,.96), rgba(12,19,34,.86));
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);padding:12px 8px 10px;margin:0 -8px 14px}
+  .htop{display:flex;align-items:center;gap:10px;justify-content:space-between}
+  .title{font-family:'Anton',sans-serif;letter-spacing:.5px;line-height:.95;font-size:22px;
+    text-transform:uppercase}
+  .title small{display:block;font-family:'Archivo';font-weight:700;font-size:10px;letter-spacing:3px;color:var(--owned);margin-top:3px}
+  .pct{font-family:'Anton';font-size:30px;line-height:1;color:var(--owned)}
+  .pct span{font-family:'Archivo';font-size:11px;font-weight:700;color:var(--muted);display:block;text-align:right;letter-spacing:1px}
+  .pct em{display:block;text-align:right;font-style:normal;font-family:'Archivo';font-weight:700;font-size:9px;
+    letter-spacing:.5px;color:var(--owned);opacity:.35;transition:opacity .3s;margin-top:2px}
+  .bar{height:8px;border-radius:99px;background:#1d2940;overflow:hidden;margin-top:10px;border:1px solid var(--line)}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,#2bd47a,#7CFFB2);width:0;transition:width .4s ease}
+  .stats{display:flex;gap:8px;margin-top:9px;font-size:11px;font-weight:700;color:var(--muted)}
+  .stats b{color:var(--ink)}
+  .pill{background:#16223a;border:1px solid var(--line);padding:4px 9px;border-radius:99px}
+
+  /* TOOLBAR */
+  .tools{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:11px}
+  .tbtn{border:1px solid var(--line);background:#16223a;color:var(--ink);font-family:'Archivo';font-weight:800;
+    font-size:11px;line-height:1.15;padding:10px 4px;border-radius:10px;cursor:pointer;text-align:center}
+  .tbtn.mode{color:var(--muted)}
+  .tbtn.mode.on[data-mode="falt"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .tbtn.mode.on[data-mode="rep"]{background:var(--rep);color:#3a2700;border-color:var(--rep)}
+  .tbtn.act{background:#22324f;border-color:rgba(255,255,255,.22)}
+  .hint{font-size:11px;color:var(--muted);margin-top:8px;min-height:14px;font-weight:600}
+
+  /* SECTIONS */
+  .sec{margin-bottom:16px;border-radius:16px;overflow:hidden;box-shadow:var(--shadow);background:var(--panel);
+    border:1px solid var(--line)}
+  .sechead{display:flex;align-items:center;gap:12px;padding:11px 13px;background:var(--gc);color:var(--gt)}
+  .glet{font-family:'Anton';font-size:26px;line-height:1;opacity:.92}
+  .sechead .st{font-family:'Anton';font-size:15px;letter-spacing:.5px;text-transform:uppercase}
+
+  .team{padding:11px 12px 13px;border-top:1px solid var(--line)}
+  .team:first-of-type{border-top:0}
+  .tname{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+  .flag{font-size:22px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.4))}
+  .tn{font-weight:800;font-size:15px}
+  .tabbr{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:1px;background:#16223a;padding:2px 7px;border-radius:6px}
+  .tprog{margin-left:auto;font-size:12px;font-weight:800;color:var(--muted)}
+  .tprog.full{color:var(--owned)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:7px}
+  .chip{position:relative;aspect-ratio:1/1.18;border:1px solid var(--line);border-radius:9px;
+    background:var(--owned);color:var(--ownedink);font-family:'Archivo';font-weight:800;font-size:13px;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;
+    box-shadow:0 2px 0 rgba(0,0,0,.18);transition:transform .06s ease, background .12s}
+  .chip:active{transform:scale(.92)}
+  .chip.miss{background:repeating-linear-gradient(45deg,#1a2438,#1a2438 5px,#202c45 5px,#202c45 10px);
+    color:var(--miss);border-color:rgba(255,255,255,.07);box-shadow:none}
+  .chip.miss .num{color:#6b7da0}
+  .chip .num{pointer-events:none}
+  .chip.sm .num{font-size:10px;letter-spacing:-.3px}
+  /* foil escudo (slot 1) */
+  .chip.foil.owned-state{background:linear-gradient(135deg,#ffd86b,#2bd47a 40%,#43c6ff 75%,#b06bff);
+    background-size:200% 200%;animation:foil 4s linear infinite;color:#0a2a18}
+  @keyframes foil{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  .chip .tag{position:absolute;top:3px;left:4px;font-size:7px;font-weight:800;letter-spacing:.5px;opacity:.65;text-transform:uppercase}
+  /* dupes */
+  .chip .dup{position:absolute;bottom:-5px;right:-5px;min-width:18px;height:18px;padding:0 4px;border-radius:99px;
+    background:var(--rep);color:#3a2700;font-size:11px;font-weight:800;display:none;align-items:center;justify-content:center;
+    border:2px solid var(--panel);box-shadow:0 2px 4px rgba(0,0,0,.4)}
+  .chip.hasdup{outline:2px solid var(--rep);outline-offset:-1px}
+  .chip.hasdup .dup{display:flex}
+  .chip .minus{position:absolute;top:-6px;left:-6px;width:18px;height:18px;border-radius:99px;background:#ff5a5f;color:#fff;
+    font-size:14px;font-weight:800;line-height:15px;display:none;align-items:center;justify-content:center;border:2px solid var(--panel)}
+  body.mode-rep .chip.hasdup .minus{display:flex}
+
+  /* SHEET */
+  .sheet{position:fixed;inset:0;z-index:100;background:var(--bg);
+    display:none;align-items:stretch}
+  .sheet.open{display:flex}
+  .sheetbox{background:var(--panel);width:100%;margin:0 auto;border-radius:0;
+    border:0;height:100%;max-height:100vh;max-height:100dvh;display:flex;flex-direction:column}
+  .sheettop{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+  .sheettop .st{font-family:'Anton';font-size:18px;letter-spacing:.5px}
+  .sheettop .x{margin-left:auto;border:0;background:#16223a;color:var(--ink);width:32px;height:32px;border-radius:8px;font-size:18px;cursor:pointer}
+  .sheetbody{padding:14px 12px;overflow:auto}
+  .checker{background:#0e1626;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:14px}
+  .cklabel{font-size:12px;font-weight:800;color:var(--muted);margin-bottom:8px;letter-spacing:.3px}
+  .ckrow{display:flex;gap:8px}
+  .ckrow input{flex:1;min-width:0;background:#16223a;border:1px solid var(--line);border-radius:10px;color:var(--ink);
+    font-family:'Archivo';font-weight:600;font-size:15px;padding:11px 12px;outline:none}
+  .ckrow input:focus{border-color:rgba(255,255,255,.28)}
+  .ckrow button{border:0;background:var(--accent);color:#fff;font-family:'Archivo';font-weight:800;font-size:14px;
+    padding:0 16px;border-radius:10px;cursor:pointer;white-space:nowrap}
+  .cksum{font-size:13px;font-weight:800;margin:11px 0 7px}
+  .cklist{display:flex;flex-direction:column;gap:6px}
+  .ckitem{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;font-size:13px;font-weight:700;
+    background:#16223a;border:1px solid var(--line)}
+  .ckitem .cc{font-family:ui-monospace,Menlo,monospace;font-weight:800;background:#0e1626;padding:2px 7px;border-radius:6px;font-size:12px}
+  .ckitem .cn{color:var(--muted);flex:1;font-weight:600}
+  .ckitem.ok{border-color:rgba(43,212,122,.5)}
+  .ckitem.ok .st{color:var(--owned)}
+  .ckitem.no{opacity:.75}
+  .ckitem.no .st{color:#ff7a7f}
+  .ckitem.warn .st{color:var(--rep)}
+  .ckitem .st{font-weight:800;white-space:nowrap}
+  .seclbl{font-size:11px;font-weight:800;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+  .codes{background:transparent;border:0;border-radius:0;padding:0}
+  .codes.empty{padding:14px;text-align:center}
+  .cgrp{margin-bottom:13px}
+  .cgh{font-weight:800;font-size:13px;margin-bottom:7px;color:var(--ink)}
+  .codewrap{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px 8px}
+  .codeline{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.7;
+    color:var(--ink);white-space:nowrap}
+  .codeline b{color:var(--rep);margin-left:5px;font-weight:800}
+  .copy{margin-top:12px;width:100%;border:0;background:var(--owned);color:#06351f;font-family:'Archivo';font-weight:800;
+    padding:13px;border-radius:11px;font-size:14px;cursor:pointer}
+  .empty{color:var(--muted);font-weight:600}
+
+  footer{text-align:center;color:var(--muted);font-size:11px;font-weight:600;margin-top:18px;line-height:1.6}
+  footer b{color:var(--owned)}
+  .backup{display:flex;gap:8px;justify-content:center;margin-top:12px}
+  .backup button{border:1px solid var(--line);background:#16223a;color:var(--muted);font-family:'Archivo';
+    font-weight:700;font-size:11px;padding:8px 12px;border-radius:9px;cursor:pointer}
+
+  /* TRADE */
+  .tradebtn{width:100%;margin-top:8px;border:1px solid rgba(43,168,158,.5);background:#10333a;color:#7fe9da;
+    font-family:'Archivo';font-weight:800;font-size:13px;padding:11px;border-radius:11px;cursor:pointer;letter-spacing:.3px}
+  .trmark{margin-left:auto;margin-right:10px;font-family:'Archivo';font-weight:800;font-size:13px;color:var(--owned);white-space:nowrap}
+  .trbody{flex:1;display:flex;overflow:hidden;min-height:0}
+  .tcol{flex:1;min-width:0;display:flex;flex-direction:column;border-right:1px solid var(--line)}
+  .tcol:last-child{border-right:0}
+  .tcolhead{position:sticky;top:0;padding:9px 8px;font-family:'Archivo';font-weight:800;font-size:11px;letter-spacing:.5px;
+    text-transform:uppercase;text-align:center;border-bottom:1px solid var(--line);z-index:2}
+  .tcolhead.give{background:#10333a;color:#7fe9da}
+  .tcolhead.recv{background:#3a1620;color:#ff9aa0}
+  .tcolbody{flex:1;overflow-y:auto;overflow-x:hidden;padding:8px 6px;
+    -webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
+  .trgrp{margin-bottom:9px}
+  .trgh{font-weight:800;font-size:11px;color:var(--muted);margin:0 2px 5px}
+  .trgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:4px}
+  .trc{font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;padding:6px 4px;border-radius:7px;
+    text-align:center;background:#16223a;border:1px solid var(--line);color:var(--ink);cursor:pointer;white-space:nowrap;
+    line-height:1.1;user-select:none;touch-action:pan-y}
+  .trc:active{transform:scale(.94)}
+  .trc small{display:block;font-size:9px;color:var(--muted);font-weight:600}
+  .trc.sel.give{background:#1f9e57;border-color:#2bd47a;color:#04120a}
+  .trc.sel.give small{color:rgba(0,0,0,.6)}
+  .trc.sel.recv{background:var(--accent);border-color:#ff8a8e;color:#fff}
+  .trc.foilc{border-color:#e7b53c;box-shadow:inset 0 0 0 1px rgba(231,181,60,.55),0 0 8px rgba(231,181,60,.25);
+    background:linear-gradient(135deg,#1c2438,#241f12)}
+  .trc.foilc span{color:#ffd86b}
+  .trc.foilc.sel span{color:inherit}
+  .tempty{color:var(--muted);font-size:12px;font-weight:600;text-align:center;padding:24px 8px}
+  .trok{margin:0;border:0;background:var(--owned);color:#06351f;font-family:'Archivo';font-weight:800;
+    font-size:15px;padding:15px;cursor:pointer}
+  .trok:disabled{background:#1d2940;color:#5a6a85;cursor:default}
+
+  /* TOAST */
+  .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);z-index:200;
+    background:#0e1626;border:1px solid var(--line);border-radius:12px;padding:11px 14px;display:none;align-items:center;gap:14px;
+    box-shadow:0 8px 24px rgba(0,0,0,.5);font-weight:700;font-size:13px;max-width:92vw}
+  .toast.show{display:flex;animation:toastin .25s ease forwards}
+  @keyframes toastin{to{transform:translateX(-50%) translateY(0)}}
+  .toast button{border:0;background:transparent;color:var(--owned);font-family:'Archivo';font-weight:800;font-size:13px;cursor:pointer}
+</style>
+</head>
+<body class="mode-falt">
+<div class="wrap">
+  <header>
+    <div class="htop">
+      <div class="title">Mi Álbum<small>MUNDIAL 2026 · PANINI</small></div>
+      <div class="pct"><span>COMPLETADO</span><i id="pct">0%</i><em id="saveDot">guardado ✓</em></div>
+    </div>
+    <div class="bar"><i id="barfill"></i></div>
+    <div class="stats">
+      <span class="pill"><b id="cOwned">0</b> tengo</span>
+      <span class="pill"><b id="cMiss">0</b> faltan</span>
+      <span class="pill"><b id="cRep">0</b> repes</span>
+      <span class="pill">de <b>980</b></span>
+    </div>
+    <div class="tools">
+      <button class="tbtn mode on" data-mode="falt">Marcar faltantes</button>
+      <button class="tbtn mode" data-mode="rep">Marcar repetidas</button>
+      <button class="tbtn" id="missBtn">Faltantes</button>
+      <button class="tbtn" id="repBtn">Repes</button>
+    </div>
+    <button class="tradebtn" id="tradeBtn">🔁 Modo intercambio</button>
+    <div class="hint" id="hint">Toca un cromo para marcarlo como <b style="color:#fff">faltante</b>. Todo viene marcado como “tengo”.</div>
+  </header>
+
+  <div id="board"></div>
+
+  <footer>
+    🏆 Mi colección del Mundial 2026 · 980 cromos · 48 selecciones<br>
+    Hecho para <b>Lorenzo</b> · se guarda solo en tu teléfono
+    <div class="backup">
+      <button id="exportBtn">⬇ Exportar respaldo</button>
+      <button id="importBtn">⬆ Importar respaldo</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </div>
+  </footer>
+</div>
+
+<!-- SHEET -->
+<div class="sheet" id="sheet">
+  <div class="sheetbox">
+    <div class="sheettop">
+      <span class="st" id="sheetTitle">Faltantes</span>
+      <button class="x" id="sheetClose">×</button>
+    </div>
+    <div class="sheetbody">
+      <div class="checker">
+        <div class="cklabel" id="ckLabel">Cotejar lo que te dictan:</div>
+        <div class="ckrow">
+          <input id="chkInput" type="text" autocomplete="off" placeholder="ej: mexico 2, panama 4, fwc 5">
+          <button id="chkBtn">Cotejar</button>
+        </div>
+        <div id="chkResult"></div>
+      </div>
+      <div class="seclbl">Lista completa</div>
+      <div class="codes" id="sheetCodes"></div>
+      <button class="copy" id="sheetCopy">Copiar lista</button>
+    </div>
+  </div>
+</div>
+
+<!-- TRADE -->
+<div class="sheet" id="trade">
+  <div class="sheetbox">
+    <div class="sheettop">
+      <span class="st">🔁 Intercambio</span>
+      <span class="trmark" id="trMark">Doy 0 · Recibo 0</span>
+      <button class="x" id="tradeClose">×</button>
+    </div>
+    <div class="trbody">
+      <div class="tcol" id="trGive">
+        <div class="tcolhead give">DOY · mis repes</div>
+        <div class="tcolbody" id="trGiveBody"></div>
+      </div>
+      <div class="tcol" id="trRecv">
+        <div class="tcolhead recv">RECIBO · mis faltantes</div>
+        <div class="tcolbody" id="trRecvBody"></div>
+      </div>
+    </div>
+    <button class="trok" id="trOk">✓ OK, intercambiar</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span id="toastMsg"></span><button id="toastUndo">Deshacer</button></div>
+
+<script>
+/* ---------- DATA ---------- */
+const GROUPS = [
+ {l:'A',c:'#1f9e57',t:'#eafff3',teams:[['MEX','México','🇲🇽'],['RSA','Sudáfrica','🇿🇦'],['KOR','Corea Rep.','🇰🇷'],['CZE','Chequia','🇨🇿']]},
+ {l:'B',c:'#d6342c',t:'#fff',teams:[['CAN','Canadá','🇨🇦'],['BIH','Bosnia-Herz.','🇧🇦'],['QAT','Catar','🇶🇦'],['SUI','Suiza','🇨🇭']]},
+ {l:'C',c:'#c6cf2e',t:'#26280a',teams:[['BRA','Brasil','🇧🇷'],['MAR','Marruecos','🇲🇦'],['HAI','Haití','🇭🇹'],['SCO','Escocia','🏴󠁧󠁢󠁳󠁣󠁴󠁿']]},
+ {l:'D',c:'#2b2e6b',t:'#fff',teams:[['USA','USA','🇺🇸'],['PAR','Paraguay','🇵🇾'],['AUS','Australia','🇦🇺'],['TUR','Türkiye','🇹🇷']]},
+ {l:'E',c:'#c0392b',t:'#fff',teams:[['GER','Alemania','🇩🇪'],['CUW','Curazao','🇨🇼'],['CIV','Costa de Marfil','🇨🇮'],['ECU','Ecuador','🇪🇨']]},
+ {l:'F',c:'#1aa98f',t:'#eafff9',teams:[['NED','Países Bajos','🇳🇱'],['JPN','Japón','🇯🇵'],['SWE','Suecia','🇸🇪'],['TUN','Túnez','🇹🇳']]},
+ {l:'G',c:'#9aa7e0',t:'#171c33',teams:[['BEL','Bélgica','🇧🇪'],['EGY','Egipto','🇪🇬'],['IRN','Irán','🇮🇷'],['NZL','Nueva Zelanda','🇳🇿']]},
+ {l:'H',c:'#2ba89e',t:'#eafffb',teams:[['ESP','España','🇪🇸'],['CPV','Cabo Verde','🇨🇻'],['KSA','Arabia Saudí','🇸🇦'],['URU','Uruguay','🇺🇾']]},
+ {l:'I',c:'#232a5c',t:'#fff',teams:[['FRA','Francia','🇫🇷'],['SEN','Senegal','🇸🇳'],['IRQ','Irak','🇮🇶'],['NOR','Noruega','🇳🇴']]},
+ {l:'J',c:'#e8918b',t:'#3a1513',teams:[['ARG','Argentina','🇦🇷'],['ALG','Argelia','🇩🇿'],['AUT','Austria','🇦🇹'],['JOR','Jordania','🇯🇴']]},
+ {l:'K',c:'#c0306b',t:'#fff',teams:[['POR','Portugal','🇵🇹'],['COD','Congo RD','🇨🇩'],['UZB','Uzbekistán','🇺🇿'],['COL','Colombia','🇨🇴']]},
+ {l:'L',c:'#5e1a1a',t:'#fff',teams:[['ENG','Inglaterra','🏴󠁧󠁢󠁥󠁮󠁧󠁿'],['CRO','Croacia','🇭🇷'],['GHA','Ghana','🇬🇭'],['PAN','Panamá','🇵🇦']]},
+];
+const SPECIAL = [
+ {key:'OPEN',title:'Inicio',sub:'Emblema · mascotas · sedes · todas FOIL ✨',c:'#0f766e',t:'#eafff9',
+   items:['00','FWC1','FWC2','FWC3','FWC4','FWC5','FWC6','FWC7','FWC8'],foil:true},
+ {key:'MUS',title:'FIFA Museum',sub:'Campeones 1934–2022 · FOIL ✨',c:'#a16207',t:'#fff5e0',
+   items:['FWC9','FWC10','FWC11','FWC12','FWC13','FWC14','FWC15','FWC16','FWC17','FWC18','FWC19'],foil:true},
+];
+
+/* ---------- STATE ---------- */
+const KEY='wc2026-panini-v1';
+let missing=new Set();        // codes the user does NOT have
+let dupes={};                 // code -> extra count
+let mode='falt';
+
+/* build full code list for totals */
+const ALL=[];
+SPECIAL.forEach(s=>s.items.forEach(c=>ALL.push(c)));
+GROUPS.forEach(g=>g.teams.forEach(t=>{for(let i=1;i<=20;i++)ALL.push(t[0]+i);}));
+const TOTAL=ALL.length; // 980
+const ALLSET=new Set(ALL);
+
+/* ---------- STORAGE ---------- */
+function applyData(d){
+  if(!d)return;
+  missing=new Set((d.missing||[]).filter(c=>ALLSET.has(c)));
+  const dd={};for(const k in (d.dupes||{}))if(ALLSET.has(k))dd[k]=d.dupes[k];dupes=dd;
+}
+async function load(){
+  // 1) localStorage: persiste al cerrar el navegador del teléfono
+  try{
+    const v=localStorage.getItem(KEY);
+    if(v){applyData(JSON.parse(v));return;}
+  }catch(e){}
+  // 2) respaldo: almacenamiento del visor de Claude
+  try{
+    if(window.storage){const r=await window.storage.get(KEY);if(r&&r.value)applyData(JSON.parse(r.value));}
+  }catch(e){}
+}
+let saveT=null;
+function save(){
+  clearTimeout(saveT);
+  saveT=setTimeout(()=>{
+    const payload=JSON.stringify({missing:[...missing],dupes});
+    let ok=false;
+    try{localStorage.setItem(KEY,payload);ok=true;}catch(e){}
+    try{if(window.storage)window.storage.set(KEY,payload,false);}catch(e){}
+    flashSaved(ok);
+  },250);
+}
+function flashSaved(ok){
+  const el=document.getElementById('saveDot');if(!el)return;
+  el.textContent=ok?'guardado ✓':'⚠ sin guardar';
+  el.style.color=ok?'var(--owned)':'#ff7a7f';
+  el.style.opacity='1';clearTimeout(flashSaved._t);
+  flashSaved._t=setTimeout(()=>{el.style.opacity='.35';},1200);
+}
+
+/* ---------- RENDER ---------- */
+const board=document.getElementById('board');
+function chipHTML(code,label,foil,tag,small){
+  return `<button class="chip ${foil?'foil':''} ${small?'sm':''}" data-code="${code}">
+    ${tag?`<span class="tag">${tag}</span>`:''}
+    <span class="num">${label}</span>
+    <span class="dup"></span><span class="minus">−</span></button>`;
+}
+function teamHTML(abbr,name,flag){
+  let chips='';
+  for(let i=1;i<=20;i++)chips+=chipHTML(abbr+i,i,i===1,i===1?'Foil':(i===13?'Equipo':''),false);
+  return `<div class="team" data-team="${abbr}">
+    <div class="tname"><span class="flag">${flag}</span><span class="tn">${name}</span>
+      <span class="tabbr">${abbr}</span><span class="tprog" data-prog="${abbr}">20/20</span></div>
+    <div class="grid">${chips}</div>
+    <div class="alldone">✓ Equipo completo</div>
+  </div>`;
+}
+function specHTML(s){
+  let chips='';s.items.forEach(c=>chips+=chipHTML(c,c,s.foil,'',true));
+  return `<div class="sec" style="--gc:${s.c};--gt:${s.t}">
+    <div class="sechead"><span class="glet">★</span><div><div class="st">${s.title}</div></div></div>
+    <div class="team" data-team="${s.key}">
+      <div class="tname"><span class="tn">${s.sub}</span><span class="tprog" data-prog="${s.key}">${s.items.length}/${s.items.length}</span></div>
+      <div class="grid">${chips}</div>
+      <div class="alldone">✓ Completo</div>
+    </div></div>`;
+}
+let html='';
+html+=specHTML(SPECIAL[0]);
+GROUPS.forEach(g=>{
+  html+=`<div class="sec" style="--gc:${g.c};--gt:${g.t}">
+    <div class="sechead"><span class="glet">${g.l}</span><div><div class="st">Grupo ${g.l}</div></div></div>`;
+  g.teams.forEach(t=>html+=teamHTML(t[0],t[1],t[2]));
+  html+=`</div>`;
+});
+html+=specHTML(SPECIAL[1]);
+board.innerHTML=html;
+
+/* ---------- APPLY STATE TO DOM ---------- */
+function applyChip(btn){
+  const code=btn.dataset.code;
+  const miss=missing.has(code);
+  btn.classList.toggle('miss',miss);
+  btn.classList.toggle('owned-state',!miss);
+  const d=dupes[code]||0;
+  btn.classList.toggle('hasdup',d>0);
+  btn.querySelector('.dup').textContent='+'+d;
+}
+function refreshAll(){
+  document.querySelectorAll('.chip').forEach(applyChip);
+  refreshTeams();refreshHeader();
+}
+function teamCodes(t){
+  const s=SPECIAL.find(s=>s.key===t);
+  if(s)return s.items.slice();
+  return Array.from({length:20},(_,i)=>t+(i+1));
+}
+function refreshTeams(){
+  document.querySelectorAll('[data-team]').forEach(el=>{
+    const t=el.dataset.team;const codes=teamCodes(t);
+    const have=codes.filter(c=>!missing.has(c)).length;
+    const prog=el.querySelector('[data-prog="'+t+'"]');
+    if(prog){prog.textContent=have+'/'+codes.length;prog.classList.toggle('full',have===codes.length);}
+    el.classList.toggle('allfull',have===codes.length);
+  });
+}
+function refreshHeader(){
+  const miss=missing.size, owned=TOTAL-miss;
+  let rep=0;for(const k in dupes)rep+=dupes[k];
+  const pct=Math.round(owned/TOTAL*100);
+  document.getElementById('pct').textContent=pct+'%';
+  document.getElementById('barfill').style.width=pct+'%';
+  document.getElementById('cOwned').textContent=owned;
+  document.getElementById('cMiss').textContent=miss;
+  document.getElementById('cRep').textContent=rep;
+}
+
+/* ---------- INTERACTION ---------- */
+board.addEventListener('click',e=>{
+  const minus=e.target.closest('.minus');
+  if(minus){const btn=minus.closest('.chip');const code=btn.dataset.code;
+    if(dupes[code]>0){dupes[code]--;if(dupes[code]<=0)delete dupes[code];}
+    applyChip(btn);refreshHeader();save();return;}
+  const btn=e.target.closest('.chip');if(!btn)return;
+  const code=btn.dataset.code;
+  if(mode==='falt'){
+    if(missing.has(code))missing.delete(code);else missing.add(code);
+    if(missing.has(code)){delete dupes[code];} // missing can't have dupes
+    applyChip(btn);refreshTeams();refreshHeader();save();
+  }else{
+    if(missing.has(code))return; // can't dupe what you don't have
+    dupes[code]=(dupes[code]||0)+1;
+    applyChip(btn);refreshHeader();save();
+  }
+});
+
+/* mode toggle */
+document.querySelectorAll('.tbtn.mode').forEach(b=>b.addEventListener('click',()=>{
+  mode=b.dataset.mode;
+  document.querySelectorAll('.tbtn.mode').forEach(x=>x.classList.toggle('on',x===b));
+  document.body.classList.toggle('mode-rep',mode==='rep');
+  document.body.classList.toggle('mode-falt',mode==='falt');
+  document.getElementById('hint').innerHTML = mode==='falt'
+    ? 'Toca un cromo para marcarlo como <b style="color:#fff">faltante</b>. Todo viene marcado como “tengo”.'
+    : 'Toca un cromo para sumar una <b style="color:#ffd86b">repetida</b>. Usa el “−” para restar.';
+}));
+
+/* sheets */
+const sheet=document.getElementById('sheet');
+let sheetType='miss';
+let copyText='';
+const ORDER=['OPEN',...GROUPS.flatMap(g=>g.teams.map(t=>t[0])),'MUS'];
+
+function nameOf(t){
+  for(const g of GROUPS)for(const tm of g.teams)if(tm[0]===t)return tm[2]+' '+tm[1];
+  const s=SPECIAL.find(s=>s.key===t);return s?'★ '+s.title:t;
+}
+function openSheet(type){
+  sheetType=type;
+  const isRep=type==='rep';
+  let total=0;
+  if(isRep){for(const k in dupes)total+=dupes[k];} else {total=missing.size;}
+  document.getElementById('sheetTitle').textContent = isRep
+    ? 'Repetidas ('+total+' para cambiar)' : 'Faltantes ('+total+')';
+  document.getElementById('ckLabel').textContent = isRep
+    ? 'Te dictan lo que les falta → ve qué puedes darles:'
+    : 'Te dictan lo que tienen → ve qué te sirve:';
+
+  let html='';copyText='';
+  ORDER.forEach(t=>{
+    const codes=teamCodes(t).filter(isRep?(c=>dupes[c]>0):(c=>missing.has(c)));
+    if(!codes.length)return;
+    const nm=nameOf(t);
+    copyText+=nm+'\n';
+    html+=`<div class="cgrp"><div class="cgh">${nm}</div><div class="codewrap">`;
+    codes.forEach(c=>{
+      if(isRep){html+=`<div class="codeline">${c}<b>+${dupes[c]}</b></div>`;copyText+='  '+c+'  +'+dupes[c]+'\n';}
+      else{html+=`<div class="codeline">${c}</div>`;copyText+='  '+c+'\n';}
+    });
+    html+=`</div></div>`;copyText+='\n';
+  });
+  const box=document.getElementById('sheetCodes');
+  if(html){box.innerHTML=html;box.classList.remove('empty');}
+  else{box.innerHTML='<span class="empty">Nada por aquí todavía 🎉</span>';box.classList.add('empty');}
+
+  document.getElementById('chkInput').value='';
+  document.getElementById('chkResult').innerHTML='';
+  sheet.classList.add('open');
+}
+document.getElementById('sheetClose').addEventListener('click',()=>sheet.classList.remove('open'));
+sheet.addEventListener('click',e=>{if(e.target===sheet)sheet.classList.remove('open');});
+
+document.getElementById('missBtn').addEventListener('click',()=>openSheet('miss'));
+document.getElementById('repBtn').addEventListener('click',()=>openSheet('rep'));
+
+document.getElementById('sheetCopy').addEventListener('click',function(){
+  navigator.clipboard?.writeText(copyText).then(()=>{this.textContent='¡Copiado!';setTimeout(()=>this.textContent='Copiar lista',1400);})
+   .catch(()=>{this.textContent='Mantén pulsado para copiar';});
+});
+
+/* ---------- QUICK CHECKER ---------- */
+function norm(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,'').trim();}
+const NAME2ABBR={};
+GROUPS.forEach(g=>g.teams.forEach(t=>{NAME2ABBR[norm(t[1])]=t[0];NAME2ABBR[norm(t[0])]=t[0];}));
+const ALIAS={'corea':'KOR','corea del sur':'KOR','korea':'KOR','paises bajos':'NED','holanda':'NED',
+ 'arabia':'KSA','arabia saudita':'KSA','saudi':'KSA','eeuu':'USA','estados unidos':'USA','usa':'USA',
+ 'turquia':'TUR','turkiye':'TUR','costa de marfil':'CIV','marfil':'CIV','bosnia':'BIH','cabo':'CPV',
+ 'cabo verde':'CPV','congo':'COD','congo rd':'COD','rd congo':'COD','nueva zelanda':'NZL','nz':'NZL',
+ 'sudafrica':'RSA','sud africa':'RSA','chequia':'CZE','republica checa':'CZE','checa':'CZE','catar':'QAT',
+ 'tunez':'TUN','suiza':'SUI','jordania':'JOR','argelia':'ALG','uzbekistan':'UZB','curazao':'CUW',
+ 'japon':'JPN','espana':'ESP','inglaterra':'ENG','escocia':'SCO','alemania':'GER','marruecos':'MAR',
+ 'haiti':'HAI','brasil':'BRA','francia':'FRA','noruega':'NOR','irak':'IRQ','iran':'IRN','egipto':'EGY',
+ 'belgica':'BEL','senegal':'SEN','uruguay':'URU','ecuador':'ECU','suecia':'SWE','panama':'PAN',
+ 'colombia':'COL','ghana':'GHA','croacia':'CRO','austria':'AUT','paraguay':'PAR','australia':'AUS',
+ 'canada':'CAN','mexico':'MEX','portugal':'POR',' ':''};
+function resolveAbbr(name){
+  name=norm(name);
+  if(!name)return null;
+  if(NAME2ABBR[name])return NAME2ABBR[name];
+  if(ALIAS[name])return ALIAS[name];
+  // partial match
+  for(const k in NAME2ABBR){if(k.length>2 && (k.startsWith(name)||name.startsWith(k)))return NAME2ABBR[k];}
+  for(const k in ALIAS){if(k.length>2 && (k.startsWith(name)||name.startsWith(k)))return ALIAS[k];}
+  return null;
+}
+function parseTokens(raw){
+  return raw.split(/[,;\n]+/).map(tok=>{
+    const orig=tok.trim();if(!orig)return null;
+    const low=norm(orig);
+    if(low==='00'||low==='0')return{code:'00',label:'Inicio',ok:true};
+    const m=low.match(/(\d+)\s*$/);
+    const num=m?m[1]:null;
+    let namePart=m?low.slice(0,m.index).trim():low;
+    if(!num)return{raw:orig,ok:false};
+    if(namePart.startsWith('fwc')||namePart==='f'||namePart==='museo'||namePart==='museum'){
+      const code='FWC'+num;return ALLSET.has(code)?{code,label:'FIFA Museum',ok:true}:{raw:orig,ok:false};
+    }
+    const abbr=resolveAbbr(namePart);
+    if(!abbr)return{raw:orig,ok:false};
+    const code=abbr+num;
+    if(!ALLSET.has(code))return{raw:orig,ok:false};
+    return{code,label:teamFullName(abbr),ok:true};
+  }).filter(Boolean);
+}
+function teamFullName(abbr){
+  for(const g of GROUPS)for(const t of g.teams)if(t[0]===abbr)return t[2]+' '+t[1];
+  return abbr;
+}
+function runChecker(){
+  const raw=document.getElementById('chkInput').value;
+  const out=document.getElementById('chkResult');
+  const items=parseTokens(raw);
+  if(!items.length){out.innerHTML='';return;}
+  let good=0;let rows='';
+  items.forEach(it=>{
+    if(!it.ok){rows+=`<div class="ckitem no"><span class="cc">?</span><span class="cn">${it.raw}</span><span class="st">no entendí</span></div>`;return;}
+    let cls,st;
+    if(sheetType==='rep'){
+      const d=dupes[it.code]||0;
+      if(d>0){cls='ok';st='✓ dar +'+d;good++;}
+      else if(!missing.has(it.code)){cls='warn';st='la tienes, sin repe';}
+      else{cls='no';st='✗ tú la necesitas';}
+    }else{
+      if(missing.has(it.code)){cls='ok';st='✓ te falta, pídela';good++;}
+      else{cls='no';st='ya la tienes';}
+    }
+    rows+=`<div class="ckitem ${cls}"><span class="cc">${it.code}</span><span class="cn">${it.label}</span><span class="st">${st}</span></div>`;
+  });
+  const sum=sheetType==='rep'?`Puedes dar ${good} de ${items.length}`:`Te sirven ${good} de ${items.length}`;
+  out.innerHTML=`<div class="cksum" style="color:${good?'var(--owned)':'var(--muted)'}">${sum}</div><div class="cklist">${rows}</div>`;
+}
+document.getElementById('chkBtn').addEventListener('click',runChecker);
+document.getElementById('chkInput').addEventListener('keydown',e=>{if(e.key==='Enter')runChecker();});
+document.getElementById('chkInput').addEventListener('input',function(){if(this.value.trim())runChecker();else document.getElementById('chkResult').innerHTML='';});
+
+/* ---------- TRADE MODE ---------- */
+const trade=document.getElementById('trade');
+let giveSel={}, recvSel=new Set();
+const FOILSET=new Set();
+SPECIAL.forEach(s=>{if(s.foil)s.items.forEach(c=>FOILSET.add(c));});
+GROUPS.forEach(g=>g.teams.forEach(t=>FOILSET.add(t[0]+'1')));
+const isFoil=c=>FOILSET.has(c);
+function giveCell(c,avail){
+  const k=giveSel[c]||0;
+  return `<div class="trc give ${k>0?'sel':''} ${isFoil(c)?'foilc':''}" data-code="${c}"><span>${c}${isFoil(c)?' ✨':''}</span><small>dar ${k}/${avail}</small></div>`;
+}
+function recvCell(c){
+  return `<div class="trc recv ${recvSel.has(c)?'sel':''} ${isFoil(c)?'foilc':''}" data-code="${c}"><span>${c}${isFoil(c)?' ✨':''}</span></div>`;
+}
+function buildTradeSide(bodyEl,which){
+  let html='';
+  ORDER.forEach(t=>{
+    const codes=teamCodes(t).filter(which==='give'?(c=>dupes[c]>0):(c=>missing.has(c)));
+    if(!codes.length)return;
+    html+=`<div class="trgrp"><div class="trgh">${nameOf(t)}</div><div class="trgrid">`;
+    codes.forEach(c=>{html+= which==='give'?giveCell(c,dupes[c]):recvCell(c);});
+    html+=`</div></div>`;
+  });
+  if(!html)html=`<div class="tempty">${which==='give'?'No tienes repetidas todavía':'No te falta nada 🎉'}</div>`;
+  bodyEl.innerHTML=html;
+}
+function updateMark(){
+  let give=0;for(const k in giveSel)give+=giveSel[k];
+  document.getElementById('trMark').textContent='Doy '+give+' · Recibo '+recvSel.size;
+  document.getElementById('trOk').disabled=(give===0 && recvSel.size===0);
+}
+function openTrade(){
+  giveSel={};recvSel=new Set();
+  buildTradeSide(document.getElementById('trGiveBody'),'give');
+  buildTradeSide(document.getElementById('trRecvBody'),'recv');
+  updateMark();
+  trade.classList.add('open');
+}
+document.getElementById('tradeBtn').addEventListener('click',openTrade);
+document.getElementById('tradeClose').addEventListener('click',()=>trade.classList.remove('open'));
+
+function bindTap(el,handler){
+  let sx=0,sy=0,moved=false,t=null,ignoreClick=false;
+  el.addEventListener('touchstart',e=>{const c=e.target.closest('.trc');if(!c)return;
+    t=c;moved=false;sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+  el.addEventListener('touchmove',e=>{if(!t)return;
+    if(Math.abs(e.touches[0].clientX-sx)>8||Math.abs(e.touches[0].clientY-sy)>8)moved=true;},{passive:true});
+  el.addEventListener('touchend',()=>{if(t&&!moved){handler(t);ignoreClick=true;setTimeout(()=>ignoreClick=false,400);}t=null;},{passive:true});
+  el.addEventListener('click',e=>{if(ignoreClick)return;const c=e.target.closest('.trc');if(c)handler(c);});
+}
+bindTap(document.getElementById('trGiveBody'),cell=>{
+  const c=cell.dataset.code;const avail=dupes[c]||0;
+  let k=(giveSel[c]||0)+1;if(k>avail)k=0;
+  if(k>0)giveSel[c]=k;else delete giveSel[c];
+  cell.classList.toggle('sel',k>0);
+  cell.querySelector('small').textContent='dar '+k+'/'+avail;
+  updateMark();
+});
+bindTap(document.getElementById('trRecvBody'),cell=>{
+  const c=cell.dataset.code;
+  if(recvSel.has(c))recvSel.delete(c);else recvSel.add(c);
+  cell.classList.toggle('sel',recvSel.has(c));
+  updateMark();
+});
+
+let undoSnap=null,toastT=null;
+document.getElementById('trOk').addEventListener('click',()=>{
+  undoSnap={missing:new Set(missing),dupes:JSON.parse(JSON.stringify(dupes))};
+  let gave=0,recv=0;
+  for(const c in giveSel){const q=giveSel[c];dupes[c]=(dupes[c]||0)-q;gave+=q;if(dupes[c]<=0)delete dupes[c];}
+  recvSel.forEach(c=>{if(missing.has(c)){missing.delete(c);recv++;}});
+  refreshAll();save();
+  trade.classList.remove('open');
+  const pct=Math.round((TOTAL-missing.size)/TOTAL*100);
+  showToast('Diste '+gave+', recibiste '+recv+' · '+pct+'%');
+});
+function showToast(msg){
+  document.getElementById('toastMsg').textContent=msg;
+  const t=document.getElementById('toast');t.classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),6000);
+}
+document.getElementById('toastUndo').addEventListener('click',()=>{
+  if(undoSnap){missing=new Set(undoSnap.missing);dupes=undoSnap.dupes;undoSnap=null;refreshAll();save();}
+  document.getElementById('toast').classList.remove('show');clearTimeout(toastT);
+});
+
+/* ---------- BACKUP ---------- */
+document.getElementById('exportBtn').addEventListener('click',()=>{
+  const blob=new Blob([JSON.stringify({missing:[...missing],dupes,saved:new Date().toISOString()},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='album-mundial-2026-respaldo.json';a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+});
+document.getElementById('importBtn').addEventListener('click',()=>document.getElementById('importFile').click());
+document.getElementById('importFile').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{applyData(JSON.parse(r.result));refreshAll();save();showToast('Respaldo importado ✓');}
+    catch(err){showToast('Archivo no válido');}};
+  r.readAsText(f);e.target.value='';
+});
+
+/* ---------- INIT ---------- */
+(async function(){await load();refreshAll();})();
+</script>
+</body>
+</html>
